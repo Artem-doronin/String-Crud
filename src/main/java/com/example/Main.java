@@ -9,9 +9,6 @@ public class Main {
             System.out.print("\n> ");
             String str = scanner.nextLine();
 
-            if (str == null || str.trim().isEmpty()) {
-                continue;
-            }
 
             if (str.equalsIgnoreCase("EXIT")) {
                 break;
