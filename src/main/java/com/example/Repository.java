@@ -30,6 +30,7 @@ public class Repository {
     }
 
     public void deleteToId(Command command) {
+        storage.getMap().remove(command.getId());
         System.out.println("String with id = " + command.getId() + " deleted");
     }
 

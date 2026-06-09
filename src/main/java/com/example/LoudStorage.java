@@ -11,11 +11,11 @@ import java.util.Map;
 public class LoudStorage {
     private static final String STORAGE_FILE = "commands.dat";
     private static final Long COUNTER_KEY = -1L;
-    private Map<Long, String> map = new HashMap<>();
+    private Map<Long, String> map;
 
 
-    public LoudStorage(Map<Long, String> storage) {
-        this.map = storage;
+    public LoudStorage() {
+        this.map = new HashMap<>();
         loadMapBySerialization();
     }
 
