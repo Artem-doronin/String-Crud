@@ -62,7 +62,7 @@ public class Service {
     }
 
         scanner.close();
-        loudStorage.saveMapBySerialization();
+        loudStorage.saveMapBySerialization(repo.getMap());
         System.out.println("Программа завершена. Данные сохранены.");
 }
 }

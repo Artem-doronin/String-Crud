@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class LoudStorage {
         this.map = map;
     }
 
-    public void saveMapBySerialization() {
+    public void saveMapBySerialization(Map<Long, String> map) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(STORAGE_FILE))) {
             oos.writeObject(map);
         } catch (IOException e) {
@@ -35,12 +36,12 @@ public class LoudStorage {
         }
     }
 
-    public void loadMapBySerialization() {
+    public Map<Long,String > loadMapBySerialization() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(STORAGE_FILE))) {
-            map = (Map<Long, String>) ois.readObject();
+           return (Map<Long, String>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }return Collections.emptyMap();
     }
 
     // Получить текущий счетчик
