@@ -3,6 +3,7 @@ package com.example;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -51,7 +52,7 @@ public class Main {
         }
 
         scanner.close();
-        Repository.saveMapBySerialization();
+        LoudStorage.saveMapBySerialization();
         System.out.println("Программа завершена. Данные сохранены.");
     }
 
