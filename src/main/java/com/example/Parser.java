@@ -10,18 +10,13 @@ public class Parser {
     }
 
     public Command parse(String input) {
-        if (validator.isEmpty(input)) {
-            System.err.println("Ошибка: пустая команда");
-            return null;
-        }
+
+        validator.isEmpty(input);
 
         String[] tokens = input.trim().split("\\s+");
         String command = tokens[0].toUpperCase();
 
-        if (!validator.isValidCommand(command)) {
-            System.err.println("Ошибка: неизвестная команда '" + command + "'");
-            return null;
-        }
+        validator.isValidCommand(command);
 
         try {
             return parseCommand(tokens, command);
@@ -32,64 +27,45 @@ public class Parser {
     }
 
     private Command parseCommand(String[] tokens, String command) {
-        switch (command) {
-            case "CREATE":
-                return parseCreateCommand(tokens);
-            case "GET":
-                return parseGetCommand(tokens);
-            case "UPDATE":
-            case "DELETE":
-                return parseUpdateOrDeleteCommand(tokens, command);
-            default:
-                return null;
-        }
+        return switch (command) {
+            case "CREATE" -> parseCreateCommand(tokens);
+            case "GET" -> parseGetCommand(tokens);
+            case "UPDATE" -> parseUpdateCommand(tokens, command);
+            case "DELETE" -> parseDeleteCommand(tokens, command);
+            default -> null;
+        };
     }
 
     private Command parseCreateCommand(String[] tokens) {
-        if (tokens.length < 2) {
-            System.err.println("Ошибка: CREATE требует текст");
-            return null;
-        }
-
-        String text = String.join(" ", Arrays.copyOfRange(tokens, 1, tokens.length));
-        if (!validator.hasValidCreateText(text)) {
-            System.err.println("Ошибка: CREATE требует непустое значение");
-            return null;
-        }
-
+        String text = validator.validateCreateCommand(tokens);
         return new Command(null, false, "CREATE", text);
     }
 
     private Command parseGetCommand(String[] tokens) {
         Long id = null;
         if (tokens.length > 1) {
-            if (!validator.isValidId(tokens[1])) {
-                System.err.println("Ошибка: ID должен быть числом");
-                return null;
-            }
+            validator.isValidId(tokens[1]);
             id = Long.parseLong(tokens[1]);
         }
 
         return new Command(id, tokens.length > 1, "GET", "");
     }
 
-    private Command parseUpdateOrDeleteCommand(String[] tokens, String command) {
-        if (tokens.length < 2) {
-            System.err.println("Ошибка: " + command + " требует ID");
-            return null;
-        }
-
-        String idStr = tokens[1];
-        if (!validator.isValidId(idStr)) {
-            System.err.println("Ошибка: ID должен быть числом");
-            return null;
-        }
-
-        Long id = Long.parseLong(idStr);
+    private Command parseUpdateCommand(String[] tokens, String command) {
+        validator.validateUpdateCommand(tokens);
+        Long id = Long.parseLong(tokens[1]);
         String value = tokens.length > 2 ?
                 String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
                 "";
+        return new Command(id, true, command, value);
+    }
 
+    private Command parseDeleteCommand(String[] tokens, String command) {
+        validator.validateDeleteCommand(tokens);
+        Long id = Long.parseLong(tokens[1]);
+        String value = tokens.length > 2 ?
+                String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
+                "";
         return new Command(id, true, command, value);
     }
 }
