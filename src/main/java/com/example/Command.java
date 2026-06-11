@@ -13,7 +13,7 @@ public class Command {
         this.command = command;
         this.value = value;
     }
-    public Boolean getAvailabilityOfIdInGet() {
+    public Boolean getAvailabilityOfIdInRequest() {
         return availabilityOfIdInRequest;
     }
 

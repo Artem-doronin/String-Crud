@@ -49,7 +49,7 @@ public class Service {
                 break;
 
             case "GET":
-                if (command.getAvailabilityOfIdInGet()) {
+                if (command.getAvailabilityOfIdInRequest()) {
                     repo.getToId(command);
                 } else {
                     repo.getAll();
