@@ -3,14 +3,24 @@ package com.example;
 public class Command {
 
     private Long id;
+    private Boolean availabilityOfIdInRequest;
     private String command;
     private String value;
 
-    public Command(Long id, String command, String value) {
+    public Command(Long id,Boolean availabilityOfIdInGet, String command, String value) {
         this.id = id;
+        this.availabilityOfIdInRequest = availabilityOfIdInGet;
         this.command = command;
         this.value = value;
     }
+    public Boolean getAvailabilityOfIdInRequest() {
+        return availabilityOfIdInRequest;
+    }
+
+    public void setAvailabilityOfIdInGet(Boolean availabilityOfIdInGet) {
+        this.availabilityOfIdInRequest = availabilityOfIdInGet;
+    }
+
 
     public Long getId() {
         return id;
