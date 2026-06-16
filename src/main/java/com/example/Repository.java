@@ -10,7 +10,7 @@ public class Repository {
 
     public Repository(Map<Long,Person> map) {
         this.map = new HashMap<>(map);
-        this.id = getCurrentId();
+        this.id = getMAXCurrentId() +1L;
     }
 
     public Map<Long,Person> getMap() {
@@ -44,7 +44,7 @@ public class Repository {
     }
 
     // Получить текущий счетчик
-    private long getCurrentId() {
+    private long getMAXCurrentId() {
         return  map.keySet()
                 .stream().max(Long::compareTo)
                 .orElse(1L);

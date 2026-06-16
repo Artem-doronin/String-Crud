@@ -17,32 +17,16 @@ public class Command {
         return availabilityOfIdInRequest;
     }
 
-    public void setAvailabilityOfIdInGet(Boolean availabilityOfIdInGet) {
-        this.availabilityOfIdInRequest = availabilityOfIdInGet;
-    }
-
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCommand() {
         return command;
     }
 
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
     public Person getValue() {
         return value;
     }
 
-    public void setValue(Person value) {
-        this.value = value;
-    }
 }
