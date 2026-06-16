@@ -5,9 +5,9 @@ public class Command {
     private Long id;
     private Boolean availabilityOfIdInRequest;
     private String command;
-    private String value;
+    private Person value;
 
-    public Command(Long id,Boolean availabilityOfIdInGet, String command, String value) {
+    public Command(Long id,Boolean availabilityOfIdInGet, String command, Person value) {
         this.id = id;
         this.availabilityOfIdInRequest = availabilityOfIdInGet;
         this.command = command;
@@ -38,11 +38,11 @@ public class Command {
         this.command = command;
     }
 
-    public String getValue() {
+    public Person getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Person value) {
         this.value = value;
     }
 }

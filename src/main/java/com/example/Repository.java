@@ -5,21 +5,22 @@ import java.util.Map;
 
 public class Repository {
 
-    private static final Long COUNTER_KEY = -1L;
-    private final Map<Long, String> map;
+    private final Map<Long,Person> map;
+    private Long id;
 
-    public Repository(Map<Long, String> map) {
+    public Repository(Map<Long,Person> map) {
         this.map = new HashMap<>(map);
+        this.id = getCurrentId();
     }
 
-    public Map<Long, String> getMap() {
+    public Map<Long,Person> getMap() {
         return new HashMap<>(map);
     }
 
     public void create(Command command) {
-        Long id = generateId();
         map.put(id, command.getValue());
         System.out.println("String saved with id = {" + id + "}");
+        id++;
     }
 
     public void updateToId(Command command) {
@@ -28,8 +29,8 @@ public class Repository {
     }
 
     public void getAll() {
-        for (String s : map.values()) {
-            System.out.println(s);
+        for (Person person : map.values()) {
+            System.out.println(person);
         }
     }
 
@@ -44,22 +45,8 @@ public class Repository {
 
     // Получить текущий счетчик
     private long getCurrentId() {
-        String counterValue = map.get(COUNTER_KEY);
-        if (counterValue == null) {
-            return 1;  // если счетчика нет, начинаем с 1
-        }
-        return Long.parseLong(counterValue);
+        return  map.keySet()
+                .stream().max(Long::compareTo)
+                .orElse(1L);
     }
-
-    private void setCurrentId(long id) {
-        map.put(COUNTER_KEY, String.valueOf(id));
-    }
-
-    // Генерация нового ID
-    private Long generateId() {
-        long nextId = getCurrentId();
-        setCurrentId(nextId + 1);
-        return nextId;
-    }
-
 }
