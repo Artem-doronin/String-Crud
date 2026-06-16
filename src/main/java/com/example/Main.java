@@ -1,20 +1,16 @@
 package com.example;
 
 
-import com.example.test.ParserTest;
-import com.example.test.ValidatorTest;
+import java.util.Map;
 
 public class Main {
 
     public static void main(String[] args) {
-
-        System.out.println("\n========================================");
-        System.out.println("ЗАПУСК ТЕСТОВ ПАРСЕРА");
-        System.out.println("========================================");
-
-        ParserTest.main(args);
-        ValidatorTest.main(args);
+        LoudStorage loudStorage = new LoudStorage();
+        Map<Long, String> longStringMap = loudStorage.loadMapBySerialization();
+        Repository repository = new Repository(longStringMap);
+        Service service = new Service(new Parser(new ExampleValidator()), repository, loudStorage);
+        service.start();
     }
-
 }
 
