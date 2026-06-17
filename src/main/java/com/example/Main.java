@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         LoudStorage loudStorage = new LoudStorage();
-        Map<Long, Person> longPersonMap = loudStorage.loadMapBySerialization();
+        Map<Long, Person> longPersonMap = loudStorage.loadMapFromFile();
         Repository repository = new Repository(longPersonMap);
         Service service = new Service( repository,loudStorage);
         Controller controller = new Controller(service,new Parser(new ExampleValidator()));

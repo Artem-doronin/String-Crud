@@ -6,11 +6,11 @@ import java.util.Arrays;
 
 public class Parser {
     private final Validator validator;
-    private final JsonTest maper;
+    private final JsonTest mapper;
 
     public Parser(Validator validator) {
         this.validator = validator;
-        this.maper = new JsonTest();
+        this.mapper = new JsonTest();
     }
 
     public Command parse(String input) {
@@ -42,7 +42,7 @@ public class Parser {
 
     private Command parseCreateCommand(String[] tokens) throws JsonProcessingException {
         String text = validator.validateCreateCommand(tokens);
-        return new Command(null, false, "CREATE", maper.jsonToPerson(text));
+        return new Command(null, false, "CREATE", mapper.jsonToPerson(text));
     }
 
     private Command parseGetCommand(String[] tokens) {
@@ -61,15 +61,15 @@ public class Parser {
         String value = tokens.length > 2 ?
                 String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
                 "";
-        return new Command(id, true, command, maper.jsonToPerson(value));
+        return new Command(id, true, command, mapper.jsonToPerson(value));
     }
 
-    private Command parseDeleteCommand(String[] tokens, String command) throws JsonProcessingException {
+    private Command parseDeleteCommand(String[] tokens, String command) {
         validator.validateDeleteCommand(tokens);
         Long id = Long.parseLong(tokens[1]);
         String value = tokens.length > 2 ?
                 String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
                 "";
-        return new Command(id, true, command, maper.jsonToPerson(value));
+        return new Command(id, true, command, null);
     }
 }

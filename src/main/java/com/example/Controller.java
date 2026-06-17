@@ -15,26 +15,19 @@ public class Controller {
     }
 
     public void start() {
-
         while (true) {
             System.out.print("\n> ");
             String str = scanner.nextLine();
 
-
             if (str.equalsIgnoreCase("EXIT")) {
                 break;
             }
-
             Command command = parser.parse(str);
-
             if (command == null) {
                 System.out.println("Ошибка: не удалось распарсить команду");
                 continue;
             }
-
             String cmdType = command.getCommand().toUpperCase();
-
-
             switch (cmdType) {
                 case "CREATE":
                     service.create(command);
@@ -60,8 +53,6 @@ public class Controller {
                     System.out.println("Неизвестная команда: " + cmdType);
             }
         }
-
-
         scanner.close();
         service.saveMapBySerialization();
         System.out.println("Программа завершена. Данные сохранены.");

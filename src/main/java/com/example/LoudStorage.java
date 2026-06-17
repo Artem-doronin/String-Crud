@@ -1,45 +1,66 @@
 package com.example;
 
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoudStorage {
     private static final String STORAGE_FILE = "command.dat";
+    private final JsonTest jsonTest = new JsonTest();
 
-    public void saveMapBySerialization(Map<Long, Person> map) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(STORAGE_FILE))) {
-            oos.writeObject(map);
+    public void saveMapToFile(Map<Long, Person> map) {
+        if (map == null) {
+            System.err.println("Ошибка: map не может быть null");
+            return;
+        }
+
+        String json = jsonTest.mapToJson(map);
+        if (json == null || json.equals("{}")) {
+            System.err.println("Ошибка: не удалось сериализовать map");
+            return;
+        }
+
+        try (FileWriter writer = new FileWriter(STORAGE_FILE)) {
+            writer.write(json);
+            System.out.println("✓ Сохранено " + map.size() + " записей в " + STORAGE_FILE);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Ошибка сохранения в файл: " + e.getMessage());
         }
     }
 
-    public Map<Long, Person> loadMapBySerialization() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(STORAGE_FILE))) {
-            Object obj = ois.readObject();
-            if (obj instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<Long, Person> loaded = (Map<Long, Person>) obj;
-                return loaded;
-            }
-            return new HashMap<>();
-        } catch (FileNotFoundException e) {
-            System.out.println("Файл не найден");
-            return new HashMap<>();
-        } catch (EOFException e) {
-            System.err.println("Файл пустой");
-            return new HashMap<>();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+    public Map<Long, Person> loadMapFromFile() {
+        File file = new File(LoudStorage.STORAGE_FILE);
+
+        if (!file.exists()) {
+            System.out.println("Файл не найден: " + LoudStorage.STORAGE_FILE);
             return new HashMap<>();
         }
+
+        if (file.length() == 0) {
+            System.out.println("Файл пустой: " + LoudStorage.STORAGE_FILE);
+            return new HashMap<>();
+        }
+
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Ошибка чтения файла: " + e.getMessage());
+            return new HashMap<>();
+        }
+
+        String json = content.toString();
+        if (json.trim().isEmpty()) {
+            return new HashMap<>();
+        }
+        return jsonTest.jsonToMap(json);
     }
 
 

@@ -36,6 +36,6 @@ public class Service {
     }
 
     public void saveMapBySerialization() {
-        storage.saveMapBySerialization(repo.getMap());
+        storage.saveMapToFile(repo.getMap());
     }
 }
