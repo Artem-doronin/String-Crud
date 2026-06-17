@@ -9,8 +9,9 @@ public class Main {
         LoudStorage loudStorage = new LoudStorage();
         Map<Long, Person> longPersonMap = loudStorage.loadMapBySerialization();
         Repository repository = new Repository(longPersonMap);
-        Service service = new Service(new Parser(new ExampleValidator()), repository, loudStorage);
-        service.start();
+        Service service = new Service( repository,loudStorage);
+        Controller controller = new Controller(service,new Parser(new ExampleValidator()));
+        controller.start();
     }
 }
 

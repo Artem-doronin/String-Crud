@@ -1,6 +1,8 @@
 package com.example;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Repository {
@@ -10,7 +12,7 @@ public class Repository {
 
     public Repository(Map<Long,Person> map) {
         this.map = new HashMap<>(map);
-        this.id = getMAXCurrentId() +1L;
+        this.id = getMAXCurrentId();
     }
 
     public Map<Long,Person> getMap() {
@@ -18,32 +20,29 @@ public class Repository {
     }
 
     public void create(Command command) {
-        map.put(id, command.getValue());
-        System.out.println("String saved with id = {" + id + "}");
         id++;
+        map.put(id, command.getValue());
+        System.out.println("Person saved with id = "+id);
     }
 
     public void updateToId(Command command) {
         map.put(command.getId(), command.getValue());
-        System.out.println("String  with id = {" + command.getId() + "} updated");
+        System.out.println("Person with id = "+command.getId()+"updated");
     }
 
-    public void getAll() {
-        for (Person person : map.values()) {
-            System.out.println(person);
-        }
+    public List<Person> getAll() {
+        return new ArrayList<>(map.values());
     }
 
-    public void getToId(Command command) {
-        System.out.println(map.get(command.getId()));
+    public Person getToId(Command command) {
+        return map.get(command.getId());
     }
 
     public void deleteToId(Command command) {
         map.remove(command.getId());
-        System.out.println("String with id = " + command.getId() + " deleted");
+        System.out.println("Person with id = " + command.getId() + " deleted");
     }
 
-    // Получить текущий счетчик
     private long getMAXCurrentId() {
         return  map.keySet()
                 .stream().max(Long::compareTo)

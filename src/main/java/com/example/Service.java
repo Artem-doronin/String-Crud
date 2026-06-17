@@ -1,68 +1,41 @@
 package com.example;
 
-import java.util.Scanner;
+import java.util.List;
 
 public class Service {
-    private final Parser parser;
-    private final Scanner scanner;
+
     private final Repository repo;
-    private final LoudStorage loudStorage;
+    private final LoudStorage storage;
 
-    public Service(Parser parser, Repository repo,LoudStorage loudStorage) {
-        this.parser = parser;
-        this.scanner = new Scanner(System.in);
+    public Service(Repository repo, LoudStorage storage) {
         this.repo = repo;
-        this.loudStorage = loudStorage;
+        this.storage = storage;
     }
 
-    public void start() {
+    public void create(Command command) {
+        repo.create(command);
+    }
 
-        while (true) {
-        System.out.print("\n> ");
-        String str = scanner.nextLine();
+    public void updateToId(Command command) {
+        repo.updateToId(command);
+    }
 
+    public void deleteToId(Command command) {
+        repo.deleteToId(command);
+    }
 
-        if (str.equalsIgnoreCase("EXIT")) {
-            break;
-        }
+    public void getToId(Command command) {
+        System.out.println(repo.getToId(command));
+    }
 
-        Command command = parser.parse(str);
-
-        if (command == null) {
-            System.out.println("Ошибка: не удалось распарсить команду");
-            continue;
-        }
-
-        String cmdType = command.getCommand().toUpperCase();
-
-        switch (cmdType) {
-            case "CREATE":
-                repo.create(command);
-                break;
-
-            case "UPDATE":
-                repo.updateToId(command);
-                break;
-
-            case "DELETE":
-                repo.deleteToId(command);
-                break;
-
-            case "GET":
-                if (command.getAvailabilityOfIdInRequest()) {
-                    repo.getToId(command);
-                } else {
-                    repo.getAll();
-                }
-                break;
-
-            default:
-                System.out.println("Неизвестная команда: " + cmdType);
+    public void getAll() {
+        List<Person> persons = repo.getAll();
+        for (Person person : persons) {
+            System.out.println(person);
         }
     }
 
-        scanner.close();
-        loudStorage.saveMapBySerialization(repo.getMap());
-        System.out.println("Программа завершена. Данные сохранены.");
-}
+    public void saveMapBySerialization() {
+        storage.saveMapBySerialization(repo.getMap());
+    }
 }
