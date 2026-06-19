@@ -1,5 +1,7 @@
 package com.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,15 +12,15 @@ import java.util.Map;
 
 public class LoudStorage {
     private static final String STORAGE_FILE = "command.dat";
-    private final JsonTest jsonTest = new JsonTest();
+    private final PersonMapper mapper = new PersonMapper();
 
-    public void saveMapToFile(Map<Long, Person> map) {
+    public void saveMapToFile(Map<Long, Person> map) throws JsonProcessingException {
         if (map == null) {
             System.err.println("Ошибка: map не может быть null");
             return;
         }
 
-        String json = jsonTest.mapToJson(map);
+        String json = mapper.mapToJson(map);
         if (json == null || json.equals("{}")) {
             System.err.println("Ошибка: не удалось сериализовать map");
             return;
@@ -32,7 +34,7 @@ public class LoudStorage {
         }
     }
 
-    public Map<Long, Person> loadMapFromFile() {
+    public Map<Long, Person> loadMapFromFile() throws JsonProcessingException {
         File file = new File(LoudStorage.STORAGE_FILE);
 
         if (!file.exists()) {
@@ -60,7 +62,7 @@ public class LoudStorage {
         if (json.trim().isEmpty()) {
             return new HashMap<>();
         }
-        return jsonTest.jsonToMap(json);
+        return mapper.jsonToMap(json);
     }
 
 

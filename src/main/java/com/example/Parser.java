@@ -6,14 +6,14 @@ import java.util.Arrays;
 
 public class Parser {
     private final Validator validator;
-    private final JsonTest mapper;
+    private final PersonMapper mapper;
 
     public Parser(Validator validator) {
         this.validator = validator;
-        this.mapper = new JsonTest();
+        this.mapper = new PersonMapper();
     }
 
-    public Command parse(String input) {
+    public Command parse(String input) throws JsonProcessingException {
 
         validator.isEmpty(input);
 
@@ -21,13 +21,7 @@ public class Parser {
         String command = tokens[0].toUpperCase();
 
         validator.isValidCommand(command);
-
-        try {
             return parseCommand(tokens, command);
-        } catch (JsonProcessingException j) {
-            System.err.println("Ошибка серелизации: " + j.getMessage());
-            return null;
-        }
     }
 
     private Command parseCommand(String[] tokens, String command) throws JsonProcessingException {

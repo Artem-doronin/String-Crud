@@ -1,5 +1,7 @@
 package com.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +11,15 @@ public class Repository {
 
     private final Map<Long,Person> map;
     private Long id;
+    private LoudStorage storage;
 
-    public Repository(Map<Long,Person> map) {
-        this.map = new HashMap<>(map);
+    public Repository(LoudStorage loudStorage) {
+        this.storage = loudStorage;
+        try {
+            this.map = storage.loadMapFromFile();
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Критическая ошибка при инициализации репозитория из файла", e);
+        }
         this.id = getMAXCurrentId();
     }
 
@@ -25,7 +33,7 @@ public class Repository {
         System.out.println("Person saved with id = "+id);
     }
 
-    public void updateToId(Command command) {
+    public void updateById(Command command) {
         map.put(command.getId(), command.getValue());
         System.out.println("Person with id = "+command.getId()+"updated");
     }
@@ -34,11 +42,11 @@ public class Repository {
         return new ArrayList<>(map.values());
     }
 
-    public Person getToId(Command command) {
+    public Person getById(Command command) {
         return map.get(command.getId());
     }
 
-    public void deleteToId(Command command) {
+    public void deleteById(Command command) {
         map.remove(command.getId());
         System.out.println("Person with id = " + command.getId() + " deleted");
     }

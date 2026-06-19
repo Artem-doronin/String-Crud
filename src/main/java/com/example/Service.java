@@ -1,5 +1,7 @@
 package com.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.List;
 
 public class Service {
@@ -16,16 +18,16 @@ public class Service {
         repo.create(command);
     }
 
-    public void updateToId(Command command) {
-        repo.updateToId(command);
+    public void updateById(Command command) {
+        repo.updateById(command);
     }
 
-    public void deleteToId(Command command) {
-        repo.deleteToId(command);
+    public void deleteById(Command command) {
+        repo.deleteById(command);
     }
 
-    public void getToId(Command command) {
-        System.out.println(repo.getToId(command));
+    public void getById(Command command) {
+        System.out.println(repo.getById(command));
     }
 
     public void getAll() {
@@ -35,7 +37,7 @@ public class Service {
         }
     }
 
-    public void saveMapBySerialization() {
+    public void saveMapBySerialization() throws JsonProcessingException {
         storage.saveMapToFile(repo.getMap());
     }
 }

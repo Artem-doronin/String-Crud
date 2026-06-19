@@ -1,16 +1,13 @@
 package com.example;
 
-
-import java.util.Map;
-
 public class Main {
+
 
     public static void main(String[] args) {
         LoudStorage loudStorage = new LoudStorage();
-        Map<Long, Person> longPersonMap = loudStorage.loadMapFromFile();
-        Repository repository = new Repository(longPersonMap);
-        Service service = new Service( repository,loudStorage);
-        Controller controller = new Controller(service,new Parser(new ExampleValidator()));
+        Repository repository = new Repository(loudStorage);
+        Service service = new Service(repository, loudStorage);
+        Controller controller = new Controller(service, new Parser(new ExampleValidator()));
         controller.start();
     }
 }
