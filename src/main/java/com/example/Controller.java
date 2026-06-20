@@ -17,36 +17,36 @@ public class Controller {
     }
 
     public void start() {
-        try {
-            while (true) {
+        while (true) {
+            try {
                 System.out.print("\n> ");
                 String str = scanner.nextLine();
-
                 if (str.equalsIgnoreCase("EXIT")) {
                     break;
                 }
                 Command command = parser.parse(str);
-
                 if (command == null) {
                     System.out.println("Ошибка: не удалось распарсить команду");
                     continue;
                 }
-               processCommand(command);
-
+                processCommand(command);
+            } catch (JsonProcessingException e) {
+                System.err.println("Ошибка десериализации : " + e.getMessage());
+            } catch (NullPointerException | IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
-            scanner.close();
+        }
+        scanner.close();
+        try {
             service.saveMapBySerialization();
-            System.out.println("Программа завершена. Данные сохранены.");
         } catch (JsonProcessingException e) {
             System.err.println("Ошибка сериализации : " + e.getMessage());
-        }catch (NullPointerException | IllegalArgumentException e) {
-            System.out.println(e.getMessage());
         }
+        System.out.println("Программа завершена. Данные сохранены.");
     }
 
     private void processCommand(Command command) {
         String cmdType = command.getCommand().toUpperCase();
-
         switch (cmdType) {
             case "CREATE":
                 service.create(command);
