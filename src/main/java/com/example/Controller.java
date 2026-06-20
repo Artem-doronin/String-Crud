@@ -31,16 +31,22 @@ public class Controller {
                 }
                 processCommand(command);
             } catch (JsonProcessingException e) {
+                e.printStackTrace();
                 System.err.println("Ошибка десериализации : " + e.getMessage());
             } catch (NullPointerException | IllegalArgumentException e) {
+                e.printStackTrace();
                 System.out.println(e.getMessage());
             }
         }
-        scanner.close();
+
         try {
+            scanner.close();
             service.saveMapBySerialization();
         } catch (JsonProcessingException e) {
             System.err.println("Ошибка сериализации : " + e.getMessage());
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Не удалось сохранить данные:  " + e.getMessage());
         }
         System.out.println("Программа завершена. Данные сохранены.");
     }

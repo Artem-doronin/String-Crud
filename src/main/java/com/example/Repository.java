@@ -15,11 +15,7 @@ public class Repository {
 
     public Repository(LoudStorage loudStorage) {
         this.storage = loudStorage;
-        try {
-            this.map = storage.loadMapFromFile();
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Критическая ошибка при инициализации репозитория из файла", e);
-        }
+        this.map = storage.loadMapFromFile();
         this.id = getMAXCurrentId();
     }
 

@@ -1,24 +1,21 @@
 package com.example;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 public class LoudStorage {
     private static final String STORAGE_FILE = "command.dat";
     private final PersonMapper mapper = new PersonMapper();
 
     public void saveMapToFile(Map<Long, Person> map) throws JsonProcessingException {
-        if (map == null) {
-            System.err.println("Ошибка: map не может быть null");
-            return;
-        }
+        Objects.requireNonNull(map, "map is null");
 
         String json = mapper.mapToJson(map);
         if (json == null || json.equals("{}")) {
@@ -34,17 +31,17 @@ public class LoudStorage {
         }
     }
 
-    public Map<Long, Person> loadMapFromFile() throws JsonProcessingException {
+    public Map<Long, Person> loadMapFromFile() {
         File file = new File(LoudStorage.STORAGE_FILE);
 
         if (!file.exists()) {
             System.out.println("Файл не найден: " + LoudStorage.STORAGE_FILE);
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
 
         if (file.length() == 0) {
             System.out.println("Файл пустой: " + LoudStorage.STORAGE_FILE);
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
 
         StringBuilder content = new StringBuilder();
@@ -55,15 +52,18 @@ public class LoudStorage {
             }
         } catch (IOException e) {
             System.err.println("Ошибка чтения файла: " + e.getMessage());
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
 
         String json = content.toString();
         if (json.trim().isEmpty()) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
-        return mapper.jsonToMap(json);
+        try {
+            return mapper.jsonToMap(json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return Collections.emptyMap();
+        }
     }
-
-
 }
