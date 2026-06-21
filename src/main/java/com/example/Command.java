@@ -5,9 +5,9 @@ public class Command {
     private Long id;
     private Boolean availabilityOfIdInRequest;
     private String command;
-    private String value;
+    private Person value;
 
-    public Command(Long id,Boolean availabilityOfIdInGet, String command, String value) {
+    public Command(Long id,Boolean availabilityOfIdInGet, String command, Person value) {
         this.id = id;
         this.availabilityOfIdInRequest = availabilityOfIdInGet;
         this.command = command;
@@ -17,32 +17,16 @@ public class Command {
         return availabilityOfIdInRequest;
     }
 
-    public void setAvailabilityOfIdInGet(Boolean availabilityOfIdInGet) {
-        this.availabilityOfIdInRequest = availabilityOfIdInGet;
-    }
-
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCommand() {
         return command;
     }
 
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
-    public String getValue() {
+    public Person getValue() {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
 }

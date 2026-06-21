@@ -1,65 +1,55 @@
 package com.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Repository {
 
-    private static final Long COUNTER_KEY = -1L;
-    private final Map<Long, String> map;
+    private final Map<Long,Person> map;
+    private Long id;
+    private LoudStorage storage;
 
-    public Repository(Map<Long, String> map) {
-        this.map = new HashMap<>(map);
+    public Repository(LoudStorage loudStorage) {
+        this.storage = loudStorage;
+        this.map = storage.loadMapFromFile();
+        this.id = getMAXCurrentId();
     }
 
-    public Map<Long, String> getMap() {
+    public Map<Long,Person> getMap() {
         return new HashMap<>(map);
     }
 
     public void create(Command command) {
-        Long id = generateId();
+        id++;
         map.put(id, command.getValue());
-        System.out.println("String saved with id = {" + id + "}");
+        System.out.println("Person saved with id = "+id);
     }
 
-    public void updateToId(Command command) {
+    public void updateById(Command command) {
         map.put(command.getId(), command.getValue());
-        System.out.println("String  with id = {" + command.getId() + "} updated");
+        System.out.println("Person with id = "+command.getId()+"updated");
     }
 
-    public void getAll() {
-        for (String s : map.values()) {
-            System.out.println(s);
-        }
+    public List<Person> getAll() {
+        return new ArrayList<>(map.values());
     }
 
-    public void getToId(Command command) {
-        System.out.println(map.get(command.getId()));
+    public Person getById(Command command) {
+        return map.get(command.getId());
     }
 
-    public void deleteToId(Command command) {
+    public void deleteById(Command command) {
         map.remove(command.getId());
-        System.out.println("String with id = " + command.getId() + " deleted");
+        System.out.println("Person with id = " + command.getId() + " deleted");
     }
 
-    // Получить текущий счетчик
-    private long getCurrentId() {
-        String counterValue = map.get(COUNTER_KEY);
-        if (counterValue == null) {
-            return 1;  // если счетчика нет, начинаем с 1
-        }
-        return Long.parseLong(counterValue);
+    private long getMAXCurrentId() {
+        return  map.keySet()
+                .stream().max(Long::compareTo)
+                .orElse(1L);
     }
-
-    private void setCurrentId(long id) {
-        map.put(COUNTER_KEY, String.valueOf(id));
-    }
-
-    // Генерация нового ID
-    private Long generateId() {
-        long nextId = getCurrentId();
-        setCurrentId(nextId + 1);
-        return nextId;
-    }
-
 }

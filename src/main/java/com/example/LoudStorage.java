@@ -1,67 +1,69 @@
 package com.example;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class LoudStorage {
-    private static final String STORAGE_FILE = "commands.dat";
-    private static final Long COUNTER_KEY = -1L;
-    private Map<Long, String> map;
+    private static final String STORAGE_FILE = "command.dat";
+    private final PersonMapper mapper = new PersonMapper();
 
+    public void saveMapToFile(Map<Long, Person> map) throws JsonProcessingException {
+        Objects.requireNonNull(map, "map is null");
 
-    public LoudStorage() {
-        this.map = new HashMap<>();
-        loadMapBySerialization();
-    }
+        String json = mapper.mapToJson(map);
+        if (json == null || json.equals("{}")) {
+            System.err.println("Ошибка: не удалось сериализовать map");
+            return;
+        }
 
-    public Map<Long, String> getMap(){
-        return map;
-    }
-
-    public void setMap(Map<Long, String> map) {
-        this.map = map;
-    }
-
-    public void saveMapBySerialization(Map<Long, String> map) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(STORAGE_FILE))) {
-            oos.writeObject(map);
+        try (FileWriter writer = new FileWriter(STORAGE_FILE)) {
+            writer.write(json);
+            System.out.println("✓ Сохранено " + map.size() + " записей в " + STORAGE_FILE);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Ошибка сохранения в файл: " + e.getMessage());
         }
     }
 
-    public Map<Long,String > loadMapBySerialization() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(STORAGE_FILE))) {
-           return (Map<Long, String>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }return Collections.emptyMap();
-    }
+    public Map<Long, Person> loadMapFromFile() {
+        File file = new File(LoudStorage.STORAGE_FILE);
 
-    // Получить текущий счетчик
-    private long getCurrentId() {
-        String counterValue = map.get(COUNTER_KEY);
-        if (counterValue == null) {
-            return 1;  // если счетчика нет, начинаем с 1
+        if (!file.exists()) {
+            System.out.println("Файл не найден: " + LoudStorage.STORAGE_FILE);
+            return Collections.emptyMap();
         }
-        return Long.parseLong(counterValue);
-    }
 
-    private void setCurrentId(long id) {
-        map.put(COUNTER_KEY, String.valueOf(id));
-    }
+        if (file.length() == 0) {
+            System.out.println("Файл пустой: " + LoudStorage.STORAGE_FILE);
+            return Collections.emptyMap();
+        }
 
-    // Генерация нового ID
-    public Long generateId() {
-        long nextId = getCurrentId();
-        setCurrentId(nextId + 1);
-        return nextId;
-    }
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Ошибка чтения файла: " + e.getMessage());
+            return Collections.emptyMap();
+        }
 
+        String json = content.toString();
+        if (json.trim().isEmpty()) {
+            return Collections.emptyMap();
+        }
+        try {
+            return mapper.jsonToMap(json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return Collections.emptyMap();
+        }
+    }
 }

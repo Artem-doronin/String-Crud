@@ -1,16 +1,14 @@
 package com.example;
 
-
-import java.util.Map;
-
 public class Main {
+
 
     public static void main(String[] args) {
         LoudStorage loudStorage = new LoudStorage();
-        Map<Long, String> longStringMap = loudStorage.loadMapBySerialization();
-        Repository repository = new Repository(longStringMap);
-        Service service = new Service(new Parser(new ExampleValidator()), repository, loudStorage);
-        service.start();
+        Repository repository = new Repository(loudStorage);
+        Service service = new Service(repository, loudStorage);
+        Controller controller = new Controller(service, new Parser(new ExampleValidator()));
+        controller.start();
     }
 }
 

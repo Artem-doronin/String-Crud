@@ -1,7 +1,10 @@
 import com.example.Command;
 import com.example.ExampleValidator;
 import com.example.Parser;
+import com.example.Person;
+import com.example.PersonMapper;
 import com.example.Validator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,62 +14,77 @@ class ParserTest {
 
     private Parser parser;
     private Validator validator;
+    private PersonMapper mapper;
 
     @BeforeEach
     void setUp() {
         validator = new ExampleValidator();
         parser = new Parser(validator);
+        mapper = new PersonMapper();
     }
 
-    // ============ Тесты CREATE ============
 
     @Test
-    void parse_shouldParseCreateCommand() {
-        Command command = parser.parse("CREATE Hello World");
+    void parse_shouldParseCreateCommand() throws JsonProcessingException {
+        Person person = new Person("Ваня", 22);
+        Command command = parser.parse("CREATE {\"name\":\"Ваня\",\"age\":22}");
 
         assertNotNull(command);
         assertEquals("CREATE", command.getCommand());
-        assertEquals("Hello World", command.getValue());
+        assertEquals(person, command.getValue());
         assertNull(command.getId());
         assertFalse(command.getAvailabilityOfIdInRequest());
     }
 
     @Test
-    void parse_shouldParseCreateCommandWithSpecialChars() {
-        Command command = parser.parse("CREATE !@#$%^&*()");
+    void parse_shouldParseCreateCommand1() throws JsonProcessingException {
+        Person expected = new Person("Ваня", 22);
+        String json = mapper.personToJson(expected);
+
+        Command command = parser.parse("CREATE " + json);
 
         assertNotNull(command);
-        assertEquals("!@#$%^&*()", command.getValue());
+        assertEquals("CREATE", command.getCommand());
+        assertEquals(expected, command.getValue());
+        assertNull(command.getId());
+        assertFalse(command.getAvailabilityOfIdInRequest());
     }
 
     @Test
-    void parse_shouldParseCreateCommandWithNumbers() {
-        Command command = parser.parse("CREATE 123 456");
-
-        assertNotNull(command);
-        assertEquals("123 456", command.getValue());
+    void parse_shouldParseCreateCommandIsValidValue() {
+        assertThrows(JsonProcessingException.class, () -> parser.parse("CREATE 123435"));
     }
 
     @Test
-    void parse_shouldReturnNullForCreateWithoutText() {
-        Command command = parser.parse("CREATE");
-        assertNull(command);
+    void parse_shouldParseCreateCommandThrowExceptionWhenNull()  {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
     }
 
-    // ============ Тесты GET ============
+    @Test
+    void parse_shouldParseCreateCommandThrowExceptionWhenEmpty()  {
+        assertThrows(NullPointerException.class, () -> parser.parse(""));
+    }
 
     @Test
-    void parse_shouldParseGetWithoutId() {
+    void parse_shouldParseCreateCommandThrowExceptionWhenInvalidCommand()  {
+        assertThrows(IllegalArgumentException.class, () -> parser.parse("INVALID"));
+    }
+
+
+    @Test
+    void parse_shouldParseGetWithoutId() throws JsonProcessingException {
         Command command = parser.parse("GET");
 
         assertNotNull(command);
         assertEquals("GET", command.getCommand());
         assertNull(command.getId());
         assertFalse(command.getAvailabilityOfIdInRequest());
+        assertNull(command.getValue());
     }
 
+
     @Test
-    void parse_shouldParseGetWithId() {
+    void parse_shouldParseGetWithId() throws JsonProcessingException {
         Command command = parser.parse("GET 123");
 
         assertNotNull(command);
@@ -76,7 +94,7 @@ class ParserTest {
     }
 
     @Test
-    void parse_shouldParseGetWithLargeId() {
+    void parse_shouldParseGetWithLargeId() throws JsonProcessingException {
         Command command = parser.parse("GET 999999");
 
         assertNotNull(command);
@@ -85,51 +103,59 @@ class ParserTest {
 
     @Test
     void parse_shouldReturnNullForGetWithInvalidId() {
-        Command command = parser.parse("GET abc");
-        assertNull(command);
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("GET abc"));
+        assertEquals(illegalArgumentException.getMessage(),"ID должен быть числом: abc");
     }
 
     @Test
-    void parse_shouldReturnNullForGetWithZeroId() {
-        Command command = parser.parse("GET 0");
-        assertNull(command);
+    void parse_shouldReturnNegativeId() {
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("GET -123"));
+        assertEquals(illegalArgumentException.getMessage(),"ID должен быть положительным числом");
     }
 
-    // ============ Тесты UPDATE ============
+    @Test
+    void parse_shouldIgnoreCase() throws JsonProcessingException {
+        Command command = parser.parse("get");
+        assertNotNull(command);
+        assertEquals("GET", command.getCommand());
+
+    }
+
 
     @Test
-    void parse_shouldParseUpdateCommand() {
-        Command command = parser.parse("UPDATE 1 New Value");
+    void parse_shouldParseUpdateCommand() throws JsonProcessingException {
+        Person expected = new Person("Ваня", 22);
+        String json = mapper.personToJson(expected);
+        Command command = parser.parse("UPDATE 1 " + json);
 
         assertNotNull(command);
         assertEquals("UPDATE", command.getCommand());
         assertEquals(1L, command.getId());
-        assertEquals("New Value", command.getValue());
+        assertEquals(expected, command.getValue());
         assertTrue(command.getAvailabilityOfIdInRequest());
     }
 
+
     @Test
-    void parse_shouldReturnNullForUpdateWithoutId() {
-        Command command = parser.parse("UPDATE");
-        assertNull(command);
+    void parse_shouldReturnNullForUpdateWithInvalidId() throws JsonProcessingException {
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("UPDATE abc"));
+        assertEquals(illegalArgumentException.getMessage(),"ID должен быть числом: abc");
     }
 
+
     @Test
-    void parse_shouldReturnNullForUpdateWithInvalidId() {
-        Command command = parser.parse("UPDATE abc text");
-        assertNull(command);
+    void parse_shouldReturnNegativeIdForUpdate() {
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("UPDATE -1"));
+        assertEquals(illegalArgumentException.getMessage(),"ID должен быть положительным числом");
     }
 
-    @Test
-    void parse_shouldReturnNullForUpdateWithoutText() {
-        Command command = parser.parse("UPDATE 1");
-        assertNull(command);
-    }
-
-    // ============ Тесты DELETE ============
 
     @Test
-    void parse_shouldParseDeleteCommand() {
+    void parse_shouldParseDeleteCommand() throws JsonProcessingException {
         Command command = parser.parse("DELETE 5");
 
         assertNotNull(command);
@@ -139,51 +165,22 @@ class ParserTest {
     }
 
     @Test
-    void parse_shouldReturnNullForDeleteWithoutId() {
-        Command command = parser.parse("DELETE");
-        assertNull(command);
+    void parse_shouldReturnNullForDeleteWithoutId()  {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("DELETE"));
+        assertEquals(exception.getMessage(),"DELETE требует ID");
     }
 
     @Test
     void parse_shouldReturnNullForDeleteWithInvalidId() {
-        Command command = parser.parse("DELETE abc");
-        assertNull(command);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("DELETE abc"));
+        assertEquals(exception.getMessage(),"ID должен быть числом: abc");
     }
-
-    // ============ Тесты граничных случаев ============
-
-
     @Test
-    void parse_shouldIgnoreCase() {
-        Command command = parser.parse("create Hello");
-
-        assertNotNull(command);
-        assertEquals("CREATE", command.getCommand());
-        assertEquals("Hello", command.getValue());
-    }
-
-    @Test
-    void parse_shouldParseCommandWithExtraSpaces() {
-        Command command = parser.parse("   CREATE   Hello   ");
-
-        assertNotNull(command);
-        assertEquals("Hello", command.getValue().trim());
-    }
-
-    @Test
-    void parse_shouldAcceptExactly1000Characters() {
-        String text = "a".repeat(1000);
-        Command command = parser.parse("CREATE " + text);
-
-        assertNotNull(command);
-        assertEquals(text, command.getValue());
-    }
-
-    @Test
-    void parse_shouldRejectMoreThan1000Characters() {
-        String text = "a".repeat(1001);
-        Command command = parser.parse("CREATE " + text);
-
-        assertNull(command);
+    void parse_shouldParseDeleteWithIdNegative()  {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> parser.parse("DELETE -2"));
+        assertEquals(exception.getMessage(),"ID должен быть положительным числом");
     }
 }
