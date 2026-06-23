@@ -14,7 +14,7 @@ public class LoudStorage {
     private static final String STORAGE_FILE = "command.dat";
     private final PersonMapper mapper = new PersonMapper();
 
-    public void saveMapToFile(Map<Long, Person> map) throws JsonProcessingException {
+    public  void saveMapToFile(Map<Long, Person> map) throws JsonProcessingException {
         Objects.requireNonNull(map, "map is null");
 
         String json = mapper.mapToJson(map);

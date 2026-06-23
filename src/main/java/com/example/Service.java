@@ -6,12 +6,11 @@ import java.util.List;
 
 public class Service {
 
-    private final RepositoryDb repo;
-    private final LoudStorage storage;
+    private final Repository repo;
 
-    public Service(RepositoryDb repo, LoudStorage storage) {
+
+    public Service(Repository repo) {
         this.repo = repo;
-        this.storage = storage;
     }
 
     public void create(Command command) {
@@ -36,8 +35,8 @@ public class Service {
             System.out.println(person);
         }
     }
-
+//todo что-нибудь придумать
     public void saveMapBySerialization() throws JsonProcessingException {
-        storage.saveMapToFile(repo.getMap());
+       storage.saveMapToFile(repo.getMap());
     }
 }

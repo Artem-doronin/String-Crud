@@ -15,7 +15,17 @@
         <junit.version>5.10.2</junit.version>
     </properties>
 
+
+
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.11</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- JUnit Jupiter (для написания тестов) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
