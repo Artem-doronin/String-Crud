@@ -35,8 +35,16 @@ public class Service {
             System.out.println(person);
         }
     }
-//todo что-нибудь придумать
-    public void saveMapBySerialization() throws JsonProcessingException {
-       storage.saveMapToFile(repo.getMap());
+    //todo буду колхозить
+
+
+    public void exitToSave() throws JsonProcessingException {
+        if (repo instanceof InMemoryRepository) {
+            InMemoryRepository memoryRepository = (InMemoryRepository) repo;
+            memoryRepository.saveToStorage();
+            System.out.println("✓ Данные сохранены в файл");
+        } else {
+            System.out.println("✓ Данные уже в БД, сохранение не требуется");
+        }
     }
 }

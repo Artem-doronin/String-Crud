@@ -1,5 +1,7 @@
 package com.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,5 +56,9 @@ public class InMemoryRepository implements Repository {
         return  map.keySet()
                 .stream().max(Long::compareTo)
                 .orElse(1L);
+    }
+
+    public void saveToStorage() throws JsonProcessingException {
+        storage.saveMapToFile(map);
     }
 }
