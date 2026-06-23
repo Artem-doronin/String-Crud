@@ -6,10 +6,10 @@ import java.util.List;
 
 public class Service {
 
-    private final Repository repo;
+    private final RepositoryDb repo;
     private final LoudStorage storage;
 
-    public Service(Repository repo, LoudStorage storage) {
+    public Service(RepositoryDb repo, LoudStorage storage) {
         this.repo = repo;
         this.storage = storage;
     }
