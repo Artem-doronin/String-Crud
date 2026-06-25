@@ -6,6 +6,6 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/projectdb","postgres","1234");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/project_db","user","pass");
     }
 }
