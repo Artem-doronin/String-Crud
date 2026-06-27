@@ -7,11 +7,10 @@ import java.util.List;
 public class Service {
 
     private final Repository repo;
-    private final LoudStorage storage;
 
-    public Service(Repository repo, LoudStorage storage) {
+
+    public Service(Repository repo) {
         this.repo = repo;
-        this.storage = storage;
     }
 
     public void create(Command command) {
@@ -36,8 +35,16 @@ public class Service {
             System.out.println(person);
         }
     }
+    //todo буду колхозить
 
-    public void saveMapBySerialization() throws JsonProcessingException {
-        storage.saveMapToFile(repo.getMap());
+
+    public void exitToSave() throws JsonProcessingException {
+        if (repo instanceof InMemoryRepository) {
+            InMemoryRepository memoryRepository = (InMemoryRepository) repo;
+            memoryRepository.saveToStorage();
+            System.out.println("✓ Данные сохранены в файл");
+        } else {
+            System.out.println("✓ Данные уже в БД, сохранение не требуется");
+        }
     }
 }

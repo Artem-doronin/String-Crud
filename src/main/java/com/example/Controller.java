@@ -41,7 +41,7 @@ public class Controller {
 
         try {
             scanner.close();
-            service.saveMapBySerialization();
+            service.exitToSave();
         } catch (JsonProcessingException e) {
             System.err.println("Ошибка сериализации : " + e.getMessage());
         } catch (Exception e){

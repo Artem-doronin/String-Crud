@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Person {
+    private long id;
     private String name;
     private int age;
 
@@ -21,6 +22,9 @@ public class Person {
                 "name='" + name + '\'' +
                 ", age=" + age +
                 '}';
+    }
+    public long getId() {
+        return id;
     }
 
     public String getName() {
