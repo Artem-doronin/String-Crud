@@ -64,7 +64,8 @@ public class Controller {
                 service.deleteById(command.getId());
                 break;
             case "GET":
-                if (command.getAvailabilityOfIdInRequest()) {
+                if (command.getId()!=null) {
+                    System.out.println(command.getId() + "Id command");
                     service.getById(command.getId());
                 } else {
                     service.getAll();

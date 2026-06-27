@@ -61,7 +61,6 @@ public class RepositoryDb implements Repository {
         }
     }
 
-
     @Override
     public List<Person> getAll() {
         String sql = "select * from person";
@@ -100,6 +99,7 @@ public class RepositoryDb implements Repository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     person = new Person();
+                    person.setId(resultSet.getLong("id"));
                     person.setName(resultSet.getString("name"));
                     person.setAge(resultSet.getInt("age"));
 
