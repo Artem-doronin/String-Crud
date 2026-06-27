@@ -9,13 +9,13 @@ import java.util.List;
 
 public class RepositoryDb implements Repository {
     @Override
-    public void create(Command command) {
+    public void create(Person person) {
         String sql = "insert into person (name, age) values (?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ) {
-            statement.setString(1, command.getValue().getName());
-            statement.setInt(2, command.getValue().getAge());
+            statement.setString(1, person.getName());
+            statement.setInt(2, person.getAge());
 
             int affectedRows = statement.executeUpdate();
 
@@ -34,25 +34,25 @@ public class RepositoryDb implements Repository {
             throw new RuntimeException("Ошибка сохранения Person", e);
         }
     }
-
+//todo подумать id будет передаваться из вне или в person , пока в person
     @Override
-    public void updateById(Command command) {
+    public void updateById(Person person) {
         String sql = "update person set name=?, age=? where id=?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
         ) {
-            statement.setString(1, command.getValue().getName());
-            statement.setInt(2, command.getValue().getAge());
-            statement.setLong(3, command.getId());
+            statement.setString(1, person.getName());
+            statement.setInt(2, person.getAge());
+            statement.setLong(3, person.getId());
 
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0) {
-                System.out.println("Person with id = " + command.getId() + " not found");
+                System.out.println("Person with id = " + person.getId() + " not found");
 
             } else {
-                System.out.println("Person with id = " + command.getId() + " updated");
+                System.out.println("Person with id = " + person.getId() + " updated");
             }
 
         } catch (SQLException e) {
@@ -73,6 +73,7 @@ public class RepositoryDb implements Repository {
         ) {
             while (resultSet.next()) {
                 Person person = new Person();
+                person.setId(resultSet.getLong("id"));
                 person.setName(resultSet.getString("name"));
                 person.setAge(resultSet.getInt("age"));
                 persons.add(person);
@@ -87,15 +88,14 @@ public class RepositoryDb implements Repository {
     }
 
     @Override
-    public Person getById(Command command) {
+    public Person getById(Long id) {
         String sql = "select * from person where id = ?" ;
         Person person = null;
-        long id;
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
         ) {
-            statement.setLong(1, command.getId());
+            statement.setLong(1, id);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -104,7 +104,7 @@ public class RepositoryDb implements Repository {
                     person.setAge(resultSet.getInt("age"));
 
                 } else {
-                    System.out.println("⚠ Person с id = " + command.getId() + " не найден");
+                    System.out.println("⚠ Person с id = " + id + " не найден");
                 }
             }return person;
 
@@ -115,16 +115,16 @@ public class RepositoryDb implements Repository {
     }
 
     @Override
-    public void deleteById(Command command) {
+    public void deleteById(Long id) {
         String sql = "delete from person where id = ?";
         try(Connection connection = DatabaseConnection.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);){
-            statement.setLong(1, command.getId());
+            statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                System.out.println("Person with id = " + command.getId() + " not found");
+                System.out.println("Person with id = " + id+ " not found");
             }else {
-                System.out.println("Person with id = " + command.getId() + " deleted");
+                System.out.println("Person with id = " + id + " deleted");
             }
 
         } catch (SQLException e) {

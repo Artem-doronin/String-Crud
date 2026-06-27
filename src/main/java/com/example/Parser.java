@@ -55,7 +55,9 @@ public class Parser {
         String value = tokens.length > 2 ?
                 String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
                 "";
-        return new Command(id, true, command, mapper.jsonToPerson(value));
+        Person person = mapper.jsonToPerson(value);
+        person.setId(id);
+        return new Command(id, true, command, person);
     }
 
     private Command parseDeleteCommand(String[] tokens, String command) {

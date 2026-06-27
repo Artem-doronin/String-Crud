@@ -13,20 +13,20 @@ public class Service {
         this.repo = repo;
     }
 
-    public void create(Command command) {
-        repo.create(command);
+    public void create(Person person) {
+        repo.create(person);
     }
 
-    public void updateById(Command command) {
-        repo.updateById(command);
+    public void updateById(Person person) {
+        repo.updateById(person);
     }
 
-    public void deleteById(Command command) {
-        repo.deleteById(command);
+    public void deleteById(Long id) {
+        repo.deleteById(id);
     }
 
-    public void getById(Command command) {
-        System.out.println(repo.getById(command));
+    public void getById(Long id) {
+        System.out.println(repo.getById(id));
     }
 
     public void getAll() {
@@ -35,8 +35,6 @@ public class Service {
             System.out.println(person);
         }
     }
-    //todo буду колхозить
-
 
     public void exitToSave() throws JsonProcessingException {
         if (repo instanceof InMemoryRepository) {

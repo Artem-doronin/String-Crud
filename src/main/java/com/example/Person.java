@@ -1,6 +1,4 @@
 package com.example;
-
-import java.io.Serializable;
 import java.util.Objects;
 
 public class Person {
@@ -19,10 +17,12 @@ public class Person {
     @Override
     public String toString() {
         return "Person{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
     }
+
     public long getId() {
         return id;
     }
