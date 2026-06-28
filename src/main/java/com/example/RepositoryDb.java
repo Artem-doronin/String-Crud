@@ -34,7 +34,7 @@ public class RepositoryDb implements Repository {
             throw new RuntimeException("Ошибка сохранения Person", e);
         }
     }
-//todo подумать id будет передаваться из вне или в person , пока в person
+
     @Override
     public void updateById(Person person) {
         String sql = "update person set name=?, age=? where id=?";
