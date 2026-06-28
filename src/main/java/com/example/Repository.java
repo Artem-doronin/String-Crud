@@ -3,13 +3,13 @@ package com.example;
 import java.util.List;
 
 public interface Repository {
-    void create(Command command);
+    void create(Person person);
 
-    void updateById(Command command);
+    void updateById(Person person);
 
     List<Person> getAll();
 
-    Person getById(Command command);
+    Person getById(Long id);
 
-    void deleteById(Command command);
+    void deleteById(Long id);
 }

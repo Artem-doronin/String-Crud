@@ -55,17 +55,18 @@ public class Controller {
         String cmdType = command.getCommand().toUpperCase();
         switch (cmdType) {
             case "CREATE":
-                service.create(command);
+                service.create(command.getValue());
                 break;
             case "UPDATE":
-                service.updateById(command);
+                service.updateById(command.getValue());
                 break;
             case "DELETE":
-                service.deleteById(command);
+                service.deleteById(command.getId());
                 break;
             case "GET":
-                if (command.getAvailabilityOfIdInRequest()) {
-                    service.getById(command);
+                if (command.getId()!=null) {
+                    System.out.println(command.getId() + "Id command");
+                    service.getById(command.getId());
                 } else {
                     service.getAll();
                 }

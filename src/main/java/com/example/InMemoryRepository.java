@@ -24,16 +24,16 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public void create(Command command) {
+    public void create(Person person) {
         id++;
-        map.put(id, command.getValue());
+        map.put(id, person);
         System.out.println("Person saved with id = "+id);
     }
 
     @Override
-    public void updateById(Command command) {
-        map.put(command.getId(), command.getValue());
-        System.out.println("Person with id = "+command.getId()+"updated");
+    public void updateById(Person person) {
+        map.put(person.getId(), person);
+        System.out.println("Person with id = "+person.getId()+"updated");
     }
 
     @Override
@@ -42,14 +42,14 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public Person getById(Command command) {
-        return map.get(command.getId());
+    public Person getById(Long id) {
+        return map.get(id);
     }
 
     @Override
-    public void deleteById(Command command) {
-        map.remove(command.getId());
-        System.out.println("Person with id = " + command.getId() + " deleted");
+    public void deleteById(Long id) {
+        map.remove(id);
+        System.out.println("Person with id = " + id + " deleted");
     }
 
     private long getMAXCurrentId() {

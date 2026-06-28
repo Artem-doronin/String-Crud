@@ -36,7 +36,7 @@ public class Parser {
 
     private Command parseCreateCommand(String[] tokens) throws JsonProcessingException {
         String text = validator.validateCreateCommand(tokens);
-        return new Command(null, false, "CREATE", mapper.jsonToPerson(text));
+        return new Command(null, "CREATE", mapper.jsonToPerson(text));
     }
 
     private Command parseGetCommand(String[] tokens) {
@@ -46,7 +46,7 @@ public class Parser {
             id = Long.parseLong(tokens[1]);
         }
 
-        return new Command(id, tokens.length > 1, "GET", null);
+        return new Command(id, "GET", null);
     }
 
     private Command parseUpdateCommand(String[] tokens, String command) throws JsonProcessingException {
@@ -55,7 +55,9 @@ public class Parser {
         String value = tokens.length > 2 ?
                 String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
                 "";
-        return new Command(id, true, command, mapper.jsonToPerson(value));
+        Person person = mapper.jsonToPerson(value);
+        person.setId(id);
+        return new Command(id, command, person);
     }
 
     private Command parseDeleteCommand(String[] tokens, String command) {
@@ -64,6 +66,6 @@ public class Parser {
         String value = tokens.length > 2 ?
                 String.join(" ", Arrays.copyOfRange(tokens, 2, tokens.length)) :
                 "";
-        return new Command(id, true, command, null);
+        return new Command(id, command, null);
     }
 }
