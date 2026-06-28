@@ -36,7 +36,9 @@ public class Service {
             System.out.println(person);
         }
     }
-
+    //todo вопрос если dataLoader используется в одном месте нужно ли его в поле заносить ?
+    //todo у меня два dataLoader один здесь другой в InMemoryRepository в методе loadData()
+    //todo у меня это разные так сказать оьекты хорошо ли это плохо ?
     public void exitToSave() throws JsonProcessingException {
         if (repo instanceof InMemoryRepository) {
             dataLoader.saveData(repo.getAll());
