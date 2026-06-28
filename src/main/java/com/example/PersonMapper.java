@@ -8,7 +8,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class PersonMapper {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper ;
+
+    public PersonMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public Person jsonToPerson(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, Person.class);

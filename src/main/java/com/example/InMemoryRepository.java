@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class InMemoryRepository implements Repository {
 
     private final Map<Long, Person> map;
 
-    public InMemoryRepository() {
-        this.map = new HashMap<>();
-        loadData();
+    public InMemoryRepository(Map<Long, Person> map) {
+        this.map = new HashMap<>(map);
     }
 
     @Override
@@ -53,21 +51,5 @@ public class InMemoryRepository implements Repository {
         return map.keySet()
                 .stream().max(Long::compareTo)
                 .orElse(0L) + 1;
-    }
-
-    private Map<Long, Person> listToMap(List<Person> list) {
-        return list.stream().collect(Collectors.toMap(Person::getId, p -> p));
-    }
-
-    private void loadData() {
-        DataLoader dataLoader = new DataLoader();
-        List<Person> loaded = dataLoader.loadData();
-        if (loaded != null && !loaded.isEmpty()) {
-            Map<Long, Person> loadedMap = listToMap(loaded);
-            map.putAll(loadedMap);
-            System.out.println("✓ Загружено " + loaded.size() + " записей");
-        } else {
-            System.out.println("✓ Новое хранилище (данных нет)");
-        }
     }
 }

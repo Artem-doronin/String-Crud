@@ -68,7 +68,6 @@ public class ExampleValidator implements Validator {
         isValidId(parts[1]);
     }
 
-    // Дополнительные методы
     private void hasValidUpdateText(String text) {
         if (text == null || text.trim().isEmpty()) {
             throw new IllegalArgumentException("UPDATE требует непустое значение");

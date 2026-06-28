@@ -13,7 +13,11 @@ import java.util.Objects;
 
 public class DataLoader {
     private static final String STORAGE_FILE = "command.dat";
-    private final PersonMapper mapper = new PersonMapper();
+    private final PersonMapper mapper;
+
+    public DataLoader(PersonMapper mapper) {
+        this.mapper = mapper;
+    }
 
     public void saveData(List<Person> persons) throws JsonProcessingException {
         Objects.requireNonNull(persons, "List persons is null");

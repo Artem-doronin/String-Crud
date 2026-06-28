@@ -7,11 +7,12 @@ import java.util.List;
 public class Service {
 
     private final Repository repo;
-    private final DataLoader dataLoader = new DataLoader();
+    private final DataLoader dataLoader;
 
 
-    public Service(Repository repo) {
+    public Service(Repository repo,DataLoader dataLoader) {
         this.repo = repo;
+        this.dataLoader = dataLoader;
     }
 
     public void create(Person person) {

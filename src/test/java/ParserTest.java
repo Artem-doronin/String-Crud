@@ -5,6 +5,7 @@ import com.example.Person;
 import com.example.PersonMapper;
 import com.example.Validator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +20,8 @@ class ParserTest {
     @BeforeEach
     void setUp() {
         validator = new ExampleValidator();
-        parser = new Parser(validator);
-        mapper = new PersonMapper();
+        mapper = new PersonMapper(new ObjectMapper());
+        parser = new Parser(validator,mapper);
     }
 
 
@@ -33,7 +34,6 @@ class ParserTest {
         assertEquals("CREATE", command.getCommand());
         assertEquals(person, command.getValue());
         assertNull(command.getId());
-        assertFalse(command.getAvailabilityOfIdInRequest());
     }
 
     @Test
@@ -47,7 +47,6 @@ class ParserTest {
         assertEquals("CREATE", command.getCommand());
         assertEquals(expected, command.getValue());
         assertNull(command.getId());
-        assertFalse(command.getAvailabilityOfIdInRequest());
     }
 
     @Test
@@ -78,7 +77,6 @@ class ParserTest {
         assertNotNull(command);
         assertEquals("GET", command.getCommand());
         assertNull(command.getId());
-        assertFalse(command.getAvailabilityOfIdInRequest());
         assertNull(command.getValue());
     }
 
@@ -90,7 +88,6 @@ class ParserTest {
         assertNotNull(command);
         assertEquals("GET", command.getCommand());
         assertEquals(123L, command.getId());
-        assertTrue(command.getAvailabilityOfIdInRequest());
     }
 
     @Test
@@ -134,7 +131,6 @@ class ParserTest {
         assertEquals("UPDATE", command.getCommand());
         assertEquals(1L, command.getId());
         assertEquals(expected, command.getValue());
-        assertTrue(command.getAvailabilityOfIdInRequest());
     }
 
 
@@ -161,7 +157,6 @@ class ParserTest {
         assertNotNull(command);
         assertEquals("DELETE", command.getCommand());
         assertEquals(5L, command.getId());
-        assertTrue(command.getAvailabilityOfIdInRequest());
     }
 
     @Test

@@ -8,9 +8,9 @@ public class Parser {
     private final Validator validator;
     private final PersonMapper mapper;
 
-    public Parser(Validator validator) {
+    public Parser(Validator validator,PersonMapper mapper) {
         this.validator = validator;
-        this.mapper = new PersonMapper();
+        this.mapper = mapper;
     }
 
     public Command parse(String input) throws JsonProcessingException {
