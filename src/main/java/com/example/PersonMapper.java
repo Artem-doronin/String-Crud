@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 public class PersonMapper {
@@ -15,21 +15,21 @@ public class PersonMapper {
     }
 
     public String personToJson(Person person) throws JsonProcessingException {
-        Objects.requireNonNull(person,"Person не может быть null");
+        Objects.requireNonNull(person, "Person не может быть null");
         return objectMapper.writeValueAsString(person);
     }
 
-    public String mapToJson(Map<Long, Person> map) throws JsonProcessingException {
-        Objects.requireNonNull(map,"Map не может быть null");
-        return objectMapper.writeValueAsString(map);
+    public String listToJson(List<Person> persons) throws JsonProcessingException {
+        Objects.requireNonNull(persons, "Список Persons не может быть null");
+        return objectMapper.writeValueAsString(persons);
     }
 
-    public Map<Long, Person> jsonToMap(String json) throws JsonProcessingException {
+    public List<Person> jsonToList(String json) throws JsonProcessingException {
         if (json == null || json.trim().isEmpty()) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
         return objectMapper.readValue(json,
-                objectMapper.getTypeFactory().constructMapType(Map.class, Long.class, Person.class));
+                objectMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
 
     }
 }

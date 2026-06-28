@@ -7,6 +7,7 @@ import java.util.List;
 public class Service {
 
     private final Repository repo;
+    private final DataLoader dataLoader = new DataLoader();
 
 
     public Service(Repository repo) {
@@ -38,11 +39,7 @@ public class Service {
 
     public void exitToSave() throws JsonProcessingException {
         if (repo instanceof InMemoryRepository) {
-            InMemoryRepository memoryRepository = (InMemoryRepository) repo;
-            memoryRepository.saveToStorage();
-            System.out.println("✓ Данные сохранены в файл");
-        } else {
-            System.out.println("✓ Данные уже в БД, сохранение не требуется");
+            dataLoader.saveData(repo.getAll());
         }
     }
 }
