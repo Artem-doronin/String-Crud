@@ -13,47 +13,27 @@ public class Main {
 
 
     public static void main(String[] args) {
-
-        // 1. Загружаем конфигурацию (уже загружена в статическом блоке)
         AppConfig.printConfig();
-
-        // 2. Запускаем в зависимости от режима
-        if (AppConfig.isDbMode()) {
-            System.out.println("=== 🗄️ Запуск с PostgreSQL ===");
-            startWithDb();
-        } else {
-            System.out.println("=== 💾 Запуск с InMemory ===");
-            startWithInMemory();
-        }
-    }
-
-    private static void startWithDb() {
-        DatabaseConnection dbConnection = new DatabaseConnection();
-        Repository repository = new RepositoryDb(dbConnection);
-        Validator validator = new ExampleValidator();
         ObjectMapper objectMapper = new ObjectMapper();
         PersonMapper personMapper = new PersonMapper(objectMapper);
-        Parser parser = new Parser(validator, personMapper);
         DataLoader loader = new DataLoader(personMapper);
+        Repository repository;
         Scanner scanner = new Scanner(System.in);
+        Validator validator = new ExampleValidator();
+        Parser parser = new Parser(validator,personMapper);
+
+        if (AppConfig.isDbMode()) {
+            System.out.println("=== 🗄️ Запуск с PostgreSQL ===");
+            DatabaseConnection dbConnection = new DatabaseConnection();
+            repository = new RepositoryDb(dbConnection);
+        } else {
+            System.out.println("=== 💾 Запуск с InMemory ===");
+            repository = new InMemoryRepository(loadData(loader));
+        }
         Service service = new Service(repository, loader);
         Controller controller = new Controller(service, parser, scanner);
         controller.start();
     }
-
-    private static void startWithInMemory() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        PersonMapper personMapper = new PersonMapper(objectMapper);
-        DataLoader loader = new DataLoader(personMapper);
-        Repository repository = new InMemoryRepository(loadData(loader));
-        Validator validator = new ExampleValidator();
-        Parser parser = new Parser(validator, personMapper);
-        Scanner scanner = new Scanner(System.in);
-        Service service = new Service(repository,loader);
-        Controller controller = new Controller(service, parser,scanner);
-        controller.start();
-    }
-
 
     private static Map<Long, Person> loadData(DataLoader dataLoader) {
         List<Person> loaded = dataLoader.loadData();

@@ -12,7 +12,7 @@ public class AppConfig {
     private static final String ENV_DB_PASSWORD = "APP_DB_PASSWORD";
 
     // Значения по умолчанию
-    private static final String DEFAULT_MODE = MODE_DB;
+    private static final String DEFAULT_MODE = MODE_IN_MEMORY;
     private static final String DEFAULT_DB_URL = "jdbc:postgresql://localhost:5432/project_db";
     private static final String DEFAULT_DB_USER = "user";
     private static final String DEFAULT_DB_PASSWORD = "pass";
