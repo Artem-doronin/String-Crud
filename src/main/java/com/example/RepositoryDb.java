@@ -8,10 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RepositoryDb implements Repository {
+    private final DatabaseConnection dbConnection;
+
+    public RepositoryDb(DatabaseConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
+
     @Override
     public void create(Person person) {
         String sql = "insert into person (name, age) values (?, ?)";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ) {
             statement.setString(1, person.getName());
@@ -39,7 +45,7 @@ public class RepositoryDb implements Repository {
     public void updateById(Person person) {
         String sql = "update person set name=?, age=? where id=?";
 
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
         ) {
             statement.setString(1, person.getName());
@@ -66,7 +72,7 @@ public class RepositoryDb implements Repository {
         String sql = "select * from person";
         List<Person> persons = new ArrayList<>();
 
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery();
         ) {
@@ -91,7 +97,7 @@ public class RepositoryDb implements Repository {
         String sql = "select * from person where id = ?" ;
         Person person = null;
 
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
         ) {
             statement.setLong(1, id);
@@ -117,7 +123,7 @@ public class RepositoryDb implements Repository {
     @Override
     public void deleteById(Long id) {
         String sql = "delete from person where id = ?";
-        try(Connection connection = DatabaseConnection.getConnection();
+        try(Connection connection = dbConnection.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);){
             statement.setLong(1, id);
             int affectedRows = statement.executeUpdate();

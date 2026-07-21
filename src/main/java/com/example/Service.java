@@ -7,10 +7,12 @@ import java.util.List;
 public class Service {
 
     private final Repository repo;
+    private final DataLoader dataLoader;
 
 
-    public Service(Repository repo) {
+    public Service(Repository repo,DataLoader dataLoader) {
         this.repo = repo;
+        this.dataLoader = dataLoader;
     }
 
     public void create(Person person) {
@@ -35,14 +37,12 @@ public class Service {
             System.out.println(person);
         }
     }
-
+    //todo вопрос если dataLoader используется в одном месте нужно ли его в поле заносить ?
+    //todo у меня два dataLoader один здесь другой в InMemoryRepository в методе loadData()
+    //todo у меня это разные так сказать оьекты хорошо ли это плохо ?
     public void exitToSave() throws JsonProcessingException {
         if (repo instanceof InMemoryRepository) {
-            InMemoryRepository memoryRepository = (InMemoryRepository) repo;
-            memoryRepository.saveToStorage();
-            System.out.println("✓ Данные сохранены в файл");
-        } else {
-            System.out.println("✓ Данные уже в БД, сохранение не требуется");
+            dataLoader.saveData(repo.getAll());
         }
     }
 }

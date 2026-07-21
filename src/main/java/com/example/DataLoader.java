@@ -1,47 +1,52 @@
 package com.example;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
-public class LoudStorage {
+public class DataLoader {
     private static final String STORAGE_FILE = "command.dat";
-    private final PersonMapper mapper = new PersonMapper();
+    private final PersonMapper mapper;
 
-    public  void saveMapToFile(Map<Long, Person> map) throws JsonProcessingException {
-        Objects.requireNonNull(map, "map is null");
+    public DataLoader(PersonMapper mapper) {
+        this.mapper = mapper;
+    }
 
-        String json = mapper.mapToJson(map);
+    public void saveData(List<Person> persons) throws JsonProcessingException {
+        Objects.requireNonNull(persons, "List persons is null");
+
+        String json = mapper.listToJson(persons);
         if (json == null || json.equals("{}")) {
-            System.err.println("Ошибка: не удалось сериализовать map");
+            System.err.println("Ошибка: не удалось сериализовать список Person");
             return;
         }
 
         try (FileWriter writer = new FileWriter(STORAGE_FILE)) {
             writer.write(json);
-            System.out.println("✓ Сохранено " + map.size() + " записей в " + STORAGE_FILE);
+            System.out.println("✓ Сохранено " + persons.size() + " записей в " + STORAGE_FILE);
         } catch (IOException e) {
             System.err.println("Ошибка сохранения в файл: " + e.getMessage());
         }
     }
 
-    public Map<Long, Person> loadMapFromFile() {
-        File file = new File(LoudStorage.STORAGE_FILE);
+    public List<Person> loadData() {
+        File file = new File(DataLoader.STORAGE_FILE);
 
         if (!file.exists()) {
-            System.out.println("Файл не найден: " + LoudStorage.STORAGE_FILE);
-            return Collections.emptyMap();
+            System.out.println("Файл не найден: " + DataLoader.STORAGE_FILE);
+            return Collections.emptyList();
         }
 
         if (file.length() == 0) {
-            System.out.println("Файл пустой: " + LoudStorage.STORAGE_FILE);
-            return Collections.emptyMap();
+            System.out.println("Файл пустой: " + DataLoader.STORAGE_FILE);
+            return Collections.emptyList();
         }
 
         StringBuilder content = new StringBuilder();
@@ -52,18 +57,18 @@ public class LoudStorage {
             }
         } catch (IOException e) {
             System.err.println("Ошибка чтения файла: " + e.getMessage());
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
         String json = content.toString();
         if (json.trim().isEmpty()) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
         try {
-            return mapper.jsonToMap(json);
+            return mapper.jsonToList(json);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
     }
 }

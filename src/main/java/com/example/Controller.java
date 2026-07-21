@@ -10,10 +10,10 @@ public class Controller {
     private final Parser parser;
 
 
-    public Controller(Service service, Parser parser) {
+    public Controller(Service service, Parser parser,Scanner scanner) {
         this.service = service;
         this.parser = parser;
-        this.scanner = new Scanner(System.in);
+        this.scanner = scanner;
     }
 
     public void start() {
